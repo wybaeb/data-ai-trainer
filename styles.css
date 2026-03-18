@@ -229,21 +229,24 @@ h1 {
   padding: 6px 10px;
   border-radius: 999px;
   font-size: 11px;
-  font-weight: 700;
+  font-weight: 600;
   line-height: 1.2;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-.chip,
 .signal-pill {
   background: var(--green-soft);
   color: var(--green-dark);
+  max-width: min(100%, 220px);
 }
 
-.signal-pill {
-  max-width: min(100%, 220px);
+.chip,
+.total-badge {
+  background: #fff;
+  border: 1px solid var(--line);
+  color: var(--text);
 }
 
 .kicker {
@@ -566,10 +569,7 @@ h1 {
 }
 
 .total-badge {
-  background: #fff;
-  border: 1px solid var(--line);
-  color: var(--text);
-  margin-left: auto;
+  margin-left: 0;
 }
 
 .result-card.is-primary {

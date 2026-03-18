@@ -141,6 +141,10 @@ function pluralize(count, one, few, many) {
   return many;
 }
 
+function formatTreeLabel(label) {
+  return String(label).replace(/^Маршрут\s+/u, "Дерево метрик ");
+}
+
 function buildChoicePreview(choice) {
   return `
     <h4 class="choice-title">${escapeHtml(choice.title)}</h4>
@@ -161,7 +165,7 @@ function buildChoicePreview(choice) {
         ${renderList(choice.stack, "mini-list")}
       </div>
       <div>
-        <h4>Список работ</h4>
+        <h4>План проекта</h4>
         ${renderList(choice.backlog, "backlog-list")}
       </div>
     </div>
@@ -198,7 +202,7 @@ function renderMetricPicker() {
   section.innerHTML = `
     <h2 class="panel-title">Шаг 1. Выберите пилотную метрику</h2>
     <p class="panel-subtitle">
-      Сначала выбираем не красивую формулировку, а маршрут, по которому реально можно прийти к финансовому эффекту.
+      Сначала выбираем не красивую формулировку, а дерево метрик, по которому реально можно прийти к финансовому эффекту.
     </p>
     <div class="metric-grid" id="metric-grid"></div>
   `;
@@ -207,7 +211,7 @@ function renderMetricPicker() {
 
   state.currentCase.metricOptions.forEach((metric) => {
     const node = metricCardTemplate.content.firstElementChild.cloneNode(true);
-    node.querySelector(".metric-route").textContent = metric.routeLabel;
+    node.querySelector(".metric-route").textContent = formatTreeLabel(metric.routeLabel);
     node.querySelector(".metric-title").textContent = metric.title;
     node.querySelector(".metric-rationale").textContent = metric.pilotRationale;
     if (metric.id === state.selectedMetricId) {
@@ -318,7 +322,7 @@ function renderComparison(metric, selectedResult, bestOverall, bestForMetric) {
       const isSelected = result.metric.id === metric.id;
       const statusClass = isBest ? "" : result.totalDays - bestOverall.totalDays <= 12 ? "warn" : "danger";
       const statusLabel = isBest
-        ? "лучший маршрут"
+        ? "лучшее дерево метрик"
         : result.totalDays - bestOverall.totalDays <= 12
           ? "рядом с лидером"
           : "проигрывает по времени";
@@ -326,7 +330,7 @@ function renderComparison(metric, selectedResult, bestOverall, bestForMetric) {
       return `
         <article class="comparison-card ${isBest ? "is-best" : ""} ${isSelected ? "is-selected" : ""}">
           <div class="comparison-head">
-            <span class="metric-route">${escapeHtml(result.metric.routeLabel)}</span>
+            <span class="metric-route">${escapeHtml(formatTreeLabel(result.metric.routeLabel))}</span>
             <h3>${escapeHtml(result.metric.title)}</h3>
             <span class="status-badge ${statusClass}">${escapeHtml(statusLabel)}</span>
           </div>
@@ -348,12 +352,12 @@ function renderComparison(metric, selectedResult, bestOverall, bestForMetric) {
   const selectedComboIsBestForMetric = selectedResult.totalDays === bestForMetric.totalDays;
   const discardedRoutes = getRouteComparison()
     .filter((result) => result.metric.id !== bestOverall.metric.id)
-    .map((result) => `${result.metric.routeLabel}: ${result.metric.title} (${result.totalDays} дн)`);
+    .map((result) => `${formatTreeLabel(result.metric.routeLabel)}: ${result.metric.title} (${result.totalDays} дн)`);
 
   section.innerHTML = `
-    <h2 class="panel-title">Шаг 4. Сравнение маршрутов</h2>
+    <h2 class="panel-title">Шаг 4. Сравнение деревьев метрик</h2>
     <p class="panel-subtitle">
-      Ниже тренажер автоматически считает лучший маршрут по каждому варианту метрики и сравнивает их по общей длине проекта.
+      Ниже тренажер автоматически считает лучшее дерево метрик по каждому варианту метрики и сравнивает их по общей длине проекта.
     </p>
     <div class="comparison-grid">${routeCards}</div>
     <div class="actions-row" style="margin-top: 18px;">
@@ -366,8 +370,8 @@ function renderComparison(metric, selectedResult, bestOverall, bestForMetric) {
         <h3>Экспертный разбор</h3>
         <p class="muted">
           ${selectedIsBest
-            ? "Вы выбрали маршрут, который действительно минимизирует время до доверяемого результата."
-            : `Лучший маршрут в кейсе: ${escapeHtml(bestOverall.metric.routeLabel)} — ${escapeHtml(bestOverall.metric.title)}.`}
+            ? "Вы выбрали дерево метрик, которое действительно минимизирует время до доверяемого результата."
+            : `Лучшее дерево метрик в кейсе: ${escapeHtml(formatTreeLabel(bestOverall.metric.routeLabel))} — ${escapeHtml(bestOverall.metric.title)}.`}
         </p>
         ${!selectedComboIsBestForMetric ? `<p class="muted">Даже внутри выбранной метрики можно улучшить конфигурацию источников: у этой метрики есть вариант на ${bestForMetric.totalDays} дн вместо ${selectedResult.totalDays} дн.</p>` : ""}
         <p class="muted">${escapeHtml(state.currentCase.expertNote)}</p>
@@ -388,11 +392,11 @@ function renderComparison(metric, selectedResult, bestOverall, bestForMetric) {
 function renderResult(metric, selectedResult, bestOverall, bestForMetric) {
   const selectedIsBest = selectedResult.totalDays === bestOverall.totalDays && metric.id === bestOverall.metric.id;
   const selectedComboIsBestForMetric = selectedResult.totalDays === bestForMetric.totalDays;
-  let verdictTitle = "Есть более быстрый маршрут";
-  let verdictText = `${bestOverall.metric.routeLabel} приводит к результату быстрее: ${bestOverall.totalDays} дн против ${selectedResult.totalDays} дн.`;
+  let verdictTitle = "Есть более быстрое дерево метрик";
+  let verdictText = `${formatTreeLabel(bestOverall.metric.routeLabel)} приводит к результату быстрее: ${bestOverall.totalDays} дн против ${selectedResult.totalDays} дн.`;
 
   if (selectedIsBest) {
-    verdictTitle = "Маршрут выбран удачно";
+    verdictTitle = "Дерево метрик выбрано удачно";
     verdictText = "Вы собрали конфигурацию, которая быстрее всего приводит к доверяемому результату.";
   } else if (metric.id === bestOverall.metric.id && !selectedComboIsBestForMetric) {
     verdictTitle = "Метрика выбрана верно, но источники можно улучшить";
@@ -405,7 +409,7 @@ function renderResult(metric, selectedResult, bestOverall, bestForMetric) {
   section.innerHTML = `
     <h2 class="panel-title">Шаг 5. Что уходит в проект</h2>
     <p class="panel-subtitle">
-      В финале из абстрактной карты получается вполне проектный артефакт: маршрут, главные источники, AI-блоки и список работ.
+      В финале из абстрактной карты получается вполне проектный артефакт: дерево метрик, главные источники, AI-блоки и план проекта.
     </p>
     <div class="formula-grid">
       <article class="formula-card">
@@ -425,7 +429,7 @@ function renderResult(metric, selectedResult, bestOverall, bestForMetric) {
       <article class="result-card is-primary">
         <div class="result-head">
           <h3>${escapeHtml(verdictTitle)}</h3>
-          <span class="status-badge ${selectedIsBest ? "" : "warn"}">${escapeHtml(metric.routeLabel)}</span>
+          <span class="status-badge ${selectedIsBest ? "" : "warn"}">${escapeHtml(formatTreeLabel(metric.routeLabel))}</span>
         </div>
         <p class="muted">${escapeHtml(verdictText)}</p>
         <h4>Итоговая пилотная метрика</h4>
@@ -444,7 +448,7 @@ function renderResult(metric, selectedResult, bestOverall, bestForMetric) {
       </article>
       <article class="result-card">
         <div class="result-head">
-          <h3>Список работ</h3>
+          <h3>План проекта</h3>
           <span class="status-badge">${selectedResult.backlog.length} ${pluralize(selectedResult.backlog.length, "задача", "задачи", "задач")}</span>
         </div>
         ${renderList(selectedResult.backlog, "backlog-list")}
@@ -455,7 +459,7 @@ function renderResult(metric, selectedResult, bestOverall, bestForMetric) {
           <span class="status-badge danger">${selectedResult.issues.length} ${pluralize(selectedResult.issues.length, "риск", "риска", "рисков")}</span>
         </div>
         ${renderList(selectedResult.issues, "issue-list")}
-        <h4>Что помогает маршруту</h4>
+        <h4>Что помогает дереву метрик</h4>
         ${renderList(selectedResult.pros, "mini-list")}
       </article>
     </div>
@@ -469,7 +473,7 @@ function renderEmptyMetricState() {
   section.id = "empty-state";
   section.innerHTML = `
     <div class="empty-state">
-      Выберите пилотную метрику выше. После этого появятся дерево расчета, выбор источников и итоговая оценка маршрута.
+      Выберите пилотную метрику выше. После этого появятся дерево расчета, выбор источников и итоговая оценка дерева метрик.
     </div>
   `;
   return section;
