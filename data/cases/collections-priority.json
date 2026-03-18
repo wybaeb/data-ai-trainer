@@ -1,0 +1,179 @@
+{
+  "id": "collections-priority",
+  "title": "Soft collections быстрее возвращает деньги",
+  "domain": "Collections / Next-best-action",
+  "audience": "Collections leads и data product owners",
+  "businessQuestion": "Как выбрать пилотную метрику для улучшения soft collections, чтобы быстрее доказать эффект приоритизации и AI-подсказок?",
+  "financialTarget": "Быстрее возврат просрочки -> меньше cost of risk и операционных потерь",
+  "twist": "Самая интуитивная нагрузочная метрика здесь почти бесполезна, если она не показывает реальный возврат денег.",
+  "expertNote": "В большинстве таких кейсов выигрывает promise-to-pay kept rate: он не такой быстрый, как звонки на оператора, но намного ближе к деньгам и дает достаточно ранний сигнал.",
+  "successCriteria": [
+    "метрика связана с возвратом денег",
+    "есть понятная baseline группа",
+    "можно разделить обещания и фактические оплаты",
+    "метрика не зависит только от объема контактов"
+  ],
+  "metricOptions": [
+    {
+      "id": "ptp-kept-rate",
+      "routeLabel": "Маршрут A",
+      "title": "Доля выполненных promise-to-pay",
+      "pilotRationale": "Маршрут хорошо связывает качество приоритизации с реальным денежным результатом.",
+      "tree": {
+        "leading": [
+          "Обещание оплаты",
+          "Факт платежа в окне обещания"
+        ],
+        "operational": "Promise-to-pay kept rate",
+        "financial": "Больше собранных денег -> ниже cost of risk"
+      },
+      "signals": [
+        {
+          "id": "ptp-linkage",
+          "label": "Связка обещания и оплаты",
+          "description": "Важно корректно связать обещание клиента и последующий платеж.",
+          "question": "Как строим linkage обещания и оплаты?",
+          "routeHint": "Collections core",
+          "choices": [
+            {
+              "id": "crm-payment-linkage",
+              "title": "CRM обещания + core payments",
+              "system": "CRM + core",
+              "dataCategory": "Structured internal / machine-generated",
+              "stack": ["SQL", "BI"],
+              "devDays": 9,
+              "evidenceDays": 18,
+              "quality": "high",
+              "masterSource": "ptp_payment_fact",
+              "pros": [
+                "напрямую связано с возвратом денег"
+              ],
+              "cons": [
+                "нужны единые client/account keys"
+              ],
+              "backlog": [
+                "связать promise и payment окна",
+                "описать business rules"
+              ],
+              "aiBlock": false
+            },
+            {
+              "id": "manual-ptp-tracker",
+              "title": "Ручной реестр обещаний команды",
+              "system": "Excel / collections team",
+              "dataCategory": "Structured internal / human-generated",
+              "stack": ["Excel", "BI"],
+              "devDays": 2,
+              "evidenceDays": 28,
+              "quality": "low",
+              "masterSource": "manual_ptp_tracker",
+              "pros": [
+                "можно стартовать без интеграции"
+              ],
+              "cons": [
+                "риск пропусков и ручных ошибок"
+              ],
+              "backlog": [
+                "сверка с core payments"
+              ],
+              "aiBlock": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "calls-per-agent",
+      "routeLabel": "Маршрут B",
+      "title": "Контакты на одного коллектора",
+      "pilotRationale": "Очень легко считается, но почти не показывает, помогает ли новая приоритизация вернуть деньги.",
+      "tree": {
+        "leading": [
+          "Количество звонков",
+          "Активные коллекторы"
+        ],
+        "operational": "Контакты на коллектора",
+        "financial": "Косвенная прокси продуктивности"
+      },
+      "signals": [
+        {
+          "id": "contacts-count",
+          "label": "Количество контактов",
+          "description": "Маршрут удобный, но слабо связан с конечным финансовым результатом.",
+          "question": "Как считаем контакты?",
+          "routeHint": "Telephony / CRM",
+          "choices": [
+            {
+              "id": "telephony-contacts",
+              "title": "Телефония + CRM activity",
+              "system": "Telephony + CRM",
+              "dataCategory": "Structured internal / machine-generated",
+              "stack": ["SQL", "BI"],
+              "devDays": 3,
+              "evidenceDays": 21,
+              "quality": "high",
+              "masterSource": "collections_contact_fact",
+              "pros": [
+                "запускается очень быстро"
+              ],
+              "cons": [
+                "можно нарастить контакты и не улучшить сбор"
+              ],
+              "backlog": [
+                "дедупликация activity"
+              ],
+              "aiBlock": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "time-to-first-contact",
+      "routeLabel": "Маршрут C",
+      "title": "Время до первого контакта",
+      "pilotRationale": "Хороший ранний процессовый индикатор, но он все еще косвенный по отношению к деньгам.",
+      "tree": {
+        "leading": [
+          "Дата возникновения просрочки",
+          "Время первого контакта"
+        ],
+        "operational": "Time to first contact",
+        "financial": "Быстрее реакция -> выше шанс оплаты"
+      },
+      "signals": [
+        {
+          "id": "delinquency-contact",
+          "label": "Просрочка и первый контакт",
+          "description": "Нужно построить корректную таймлинию от факта просрочки до первого успешного касания.",
+          "question": "Как строим таймлинию?",
+          "routeHint": "Core + CRM",
+          "choices": [
+            {
+              "id": "core-crm-timeline",
+              "title": "Core delinquency + CRM activity",
+              "system": "Core + CRM",
+              "dataCategory": "Structured internal / machine-generated",
+              "stack": ["SQL", "BI", "process mining"],
+              "devDays": 7,
+              "evidenceDays": 21,
+              "quality": "medium",
+              "masterSource": "delinquency_contact_timeline",
+              "pros": [
+                "полезно для process bottlenecks"
+              ],
+              "cons": [
+                "не доказывает сам по себе денежный эффект"
+              ],
+              "backlog": [
+                "связать account timeline"
+              ],
+              "aiBlock": false
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
+

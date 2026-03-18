@@ -1,0 +1,28 @@
+[
+  {
+    "id": "legal-contract-review",
+    "title": "Юристы быстрее проверяют договоры",
+    "file": "legal-contract-review.json"
+  },
+  {
+    "id": "contact-center-coaching",
+    "title": "Контакт-центр быстрее обучает операторов",
+    "file": "contact-center-coaching.json"
+  },
+  {
+    "id": "corporate-onboarding",
+    "title": "B2B-онбординг юрлиц проходит быстрее",
+    "file": "corporate-onboarding.json"
+  },
+  {
+    "id": "mobile-retention",
+    "title": "Мобильное приложение лучше удерживает клиентов",
+    "file": "mobile-retention.json"
+  },
+  {
+    "id": "collections-priority",
+    "title": "Soft collections быстрее возвращает деньги",
+    "file": "collections-priority.json"
+  }
+]
+

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Data/AI Project Trainer</title>
+    <meta
+      name="description"
+      content="Статический тренажер для выбора пилотной метрики, данных и AI-стека в data/AI-проектах."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="hero">
+        <div class="hero-copy">
+          <p class="eyebrow">Sber-style Data/AI Case Trainer</p>
+          <h1>От бизнес-вопроса к маршруту, данным и backlog проекта</h1>
+          <p class="hero-lead">
+            Тренажер помогает сравнивать маршруты расчета, выбирать пилотную
+            метрику и находить путь с минимальным временем до доверяемого
+            результата.
+          </p>
+        </div>
+        <div class="hero-panel">
+          <label class="field-label" for="case-select">Выберите кейс</label>
+          <select id="case-select" class="case-select" aria-label="Выберите кейс"></select>
+          <p id="case-url-hint" class="case-url-hint"></p>
+        </div>
+      </header>
+
+      <main id="app" class="layout" aria-live="polite">
+        <section class="panel panel-loading">
+          <p>Загружаю кейсы...</p>
+        </section>
+      </main>
+    </div>
+
+    <template id="metric-card-template">
+      <button class="metric-card" type="button">
+        <span class="metric-route"></span>
+        <strong class="metric-title"></strong>
+        <span class="metric-rationale"></span>
+      </button>
+    </template>
+
+    <template id="source-picker-template">
+      <article class="signal-card">
+        <div class="signal-card-head">
+          <div>
+            <p class="signal-label"></p>
+            <p class="signal-description"></p>
+          </div>
+          <span class="signal-pill"></span>
+        </div>
+        <label class="field-label source-label"></label>
+        <select class="source-select"></select>
+        <div class="choice-preview"></div>
+      </article>
+    </template>
+
+    <script src="./app.js" defer></script>
+  </body>
+</html>
+

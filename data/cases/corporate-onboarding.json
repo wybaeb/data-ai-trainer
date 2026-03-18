@@ -1,0 +1,202 @@
+{
+  "id": "corporate-onboarding",
+  "title": "B2B-онбординг юрлиц проходит быстрее",
+  "domain": "B2B onboarding / Process mining",
+  "audience": "Операционные руководители и process owners",
+  "businessQuestion": "Как сократить время онбординга корпоративного клиента и быстрее переводить поданные заявки в активные отношения?",
+  "financialTarget": "Быстрее активация клиента -> раньше начинается оборот и комиссионный доход",
+  "twist": "Самая точная метрика не всегда выигрывает, если для нее нет готового master-source и нужно долго собирать корректный след процесса.",
+  "expertNote": "Здесь часто выигрывает метрика времени от подачи до активации, но только если процессовый след можно быстро собрать из workflow и CRM. Иначе лучше брать долю досье, ушедших на доработку.",
+  "successCriteria": [
+    "метрика связана с revenue activation",
+    "процесс измерим по этапам",
+    "есть возможность сравнить baseline и pilot",
+    "можно объяснить бизнесу, где именно теряется время"
+  ],
+  "metricOptions": [
+    {
+      "id": "time-to-activate",
+      "routeLabel": "Маршрут A",
+      "title": "Среднее время от подачи до активации",
+      "pilotRationale": "Лучше всего связывает улучшение процесса с доходом, но нужен хороший процессовый след.",
+      "tree": {
+        "leading": [
+          "Таймстампы этапов onboarding",
+          "Дата активации клиента"
+        ],
+        "operational": "Среднее время onboarding",
+        "financial": "Раньше активирован клиент -> раньше начинается оборот"
+      },
+      "signals": [
+        {
+          "id": "stage-timestamps",
+          "label": "Таймстампы этапов",
+          "description": "Нужно собрать непрерывный след клиентского пути по этапам.",
+          "question": "Как строим след процесса?",
+          "routeHint": "Structured internal",
+          "choices": [
+            {
+              "id": "workflow-crm-join",
+              "title": "Join workflow и CRM",
+              "system": "Workflow + CRM",
+              "dataCategory": "Structured internal / machine-generated",
+              "stack": ["SQL", "BI", "process mining"],
+              "devDays": 11,
+              "evidenceDays": 21,
+              "quality": "high",
+              "masterSource": "onboarding_process_fact",
+              "pros": [
+                "показывает узкие места по этапам"
+              ],
+              "cons": [
+                "нужен стабильный client/application ID"
+              ],
+              "backlog": [
+                "сделать join ключи",
+                "построить onboarding mart"
+              ],
+              "aiBlock": false
+            },
+            {
+              "id": "manual-sampling",
+              "title": "Ручной sampling по кейсам",
+              "system": "Excel / команды фронта",
+              "dataCategory": "Structured internal / human-generated",
+              "stack": ["Excel", "BI"],
+              "devDays": 3,
+              "evidenceDays": 40,
+              "quality": "low",
+              "masterSource": "manual_onboarding_sample",
+              "pros": [
+                "подходит для быстрого discovery"
+              ],
+              "cons": [
+                "нет полноценного process trace"
+              ],
+              "backlog": [
+                "дедупликация кейсов",
+                "ручная сверка статусов"
+              ],
+              "aiBlock": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "rework-share",
+      "routeLabel": "Маршрут B",
+      "title": "Доля досье, ушедших на доработку",
+      "pilotRationale": "Более быстрый пилотный сигнал, если бизнес хочет понять качество входящего потока документов.",
+      "tree": {
+        "leading": [
+          "Факты возврата на доработку",
+          "Причина возврата"
+        ],
+        "operational": "Доля досье на доработке",
+        "financial": "Меньше возвратов -> быстрее активация -> раньше доход"
+      },
+      "signals": [
+        {
+          "id": "rework-events",
+          "label": "Причины возврата",
+          "description": "Важно понять, почему досье возвращаются и можно ли это исправить AI-подсказками.",
+          "question": "Как маркируем причины возврата?",
+          "routeHint": "Structured + text",
+          "choices": [
+            {
+              "id": "reason-codes",
+              "title": "Коды причин в workflow",
+              "system": "Workflow",
+              "dataCategory": "Structured internal / human-generated",
+              "stack": ["SQL", "BI"],
+              "devDays": 4,
+              "evidenceDays": 18,
+              "quality": "medium",
+              "masterSource": "onboarding_rework_reason_fact",
+              "pros": [
+                "быстро дает пилотный сигнал"
+              ],
+              "cons": [
+                "часть причин кодируется слишком грубо"
+              ],
+              "backlog": [
+                "очистить reason codes"
+              ],
+              "aiBlock": false
+            },
+            {
+              "id": "llm-memo-classification",
+              "title": "LLM-классификация комментариев к возврату",
+              "system": "Комментарии операционистов",
+              "dataCategory": "Unstructured internal / human-generated",
+              "stack": ["LLM", "NLP", "BI"],
+              "devDays": 9,
+              "evidenceDays": 14,
+              "quality": "high",
+              "masterSource": "rework_comment_topics",
+              "pros": [
+                "лучше выделяет реальные корневые причины"
+              ],
+              "cons": [
+                "нужна ручная валидация тем"
+              ],
+              "backlog": [
+                "собрать корпус комментариев",
+                "сделать quality sampling"
+              ],
+              "aiBlock": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "docs-per-manager",
+      "routeLabel": "Маршрут C",
+      "title": "Досье на менеджера в неделю",
+      "pilotRationale": "Понятная метрика загрузки, но она легко маскирует реальные потери качества.",
+      "tree": {
+        "leading": [
+          "Количество досье",
+          "Активные менеджеры"
+        ],
+        "operational": "Досье на менеджера",
+        "financial": "Рост пропускной способности фронта"
+      },
+      "signals": [
+        {
+          "id": "weekly-throughput",
+          "label": "Количество досье",
+          "description": "Простая нагрузочная метрика, но не всегда хорошая для защиты проекта.",
+          "question": "Как считаем throughput команды?",
+          "routeHint": "Structured internal",
+          "choices": [
+            {
+              "id": "crm-throughput",
+              "title": "Счетчик поданных досье из CRM",
+              "system": "CRM",
+              "dataCategory": "Structured internal / machine-generated",
+              "stack": ["SQL", "BI"],
+              "devDays": 2,
+              "evidenceDays": 49,
+              "quality": "high",
+              "masterSource": "crm_weekly_dossier_fact",
+              "pros": [
+                "самый быстрый запуск"
+              ],
+              "cons": [
+                "почти не объясняет качество и возвраты"
+              ],
+              "backlog": [
+                "сделать weekly snapshot"
+              ],
+              "aiBlock": false
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
+

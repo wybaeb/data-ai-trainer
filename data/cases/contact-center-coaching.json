@@ -1,0 +1,201 @@
+{
+  "id": "contact-center-coaching",
+  "title": "Контакт-центр быстрее обучает операторов",
+  "domain": "Operations / Speech Analytics",
+  "audience": "Руководители функций и BI-команды",
+  "businessQuestion": "Как быстрее выявлять операторов, которым нужен коучинг, чтобы повысить качество диалога и конверсию без роста штата супервайзеров?",
+  "financialTarget": "Лучшее качество обслуживания -> меньше повторных обращений -> ниже cost-to-serve",
+  "twist": "Самая привычная операционная метрика оказывается слишком медленной и плохо отделяет эффект обучения от сезонности нагрузки.",
+  "expertNote": "Наиболее полезным становится маршрут с AI-оценкой соблюдения скрипта. Он сложнее по стеку, но быстрее показывает управляемый эффект на качество диалога и повторные обращения.",
+  "successCriteria": [
+    "метрика меняется после обучения в обозримый срок",
+    "есть baseline на группе операторов",
+    "метрика не сводится только к нагрузке",
+    "данные можно связать с конкретным оператором и звонком"
+  ],
+  "metricOptions": [
+    {
+      "id": "script-compliance",
+      "routeLabel": "Маршрут A",
+      "title": "Доля звонков с соблюдением скрипта",
+      "pilotRationale": "Хорошо показывает эффект коучинга и быстро дает материал для управленческих решений.",
+      "tree": {
+        "leading": [
+          "Распознанный текст звонка",
+          "Соблюдение ключевых шагов скрипта"
+        ],
+        "operational": "Доля звонков с соблюдением скрипта",
+        "financial": "Меньше повторных обращений -> ниже cost-to-serve"
+      },
+      "signals": [
+        {
+          "id": "call-transcript",
+          "label": "Текст звонка",
+          "description": "Нужно получить текст разговора для автоматического анализа.",
+          "question": "Как получаем текст звонка?",
+          "routeHint": "Unstructured audio",
+          "choices": [
+            {
+              "id": "asr-platform",
+              "title": "Корпоративная ASR-платформа",
+              "system": "Speech analytics",
+              "dataCategory": "Unstructured internal / machine-generated",
+              "stack": ["ASR", "NLP", "LLM"],
+              "devDays": 12,
+              "evidenceDays": 14,
+              "quality": "high",
+              "masterSource": "call_transcript_fact",
+              "pros": [
+                "быстро дает богатые признаки для коучинга"
+              ],
+              "cons": [
+                "нужно бюджетировать AI-инференс"
+              ],
+              "backlog": [
+                "подключить ASR поток",
+                "настроить словари и quality monitoring"
+              ],
+              "aiBlock": true
+            },
+            {
+              "id": "manual-qa-sheets",
+              "title": "Ручные QA-листы супервайзеров",
+              "system": "Excel / QA team",
+              "dataCategory": "Structured internal / human-generated",
+              "stack": ["Excel", "BI"],
+              "devDays": 2,
+              "evidenceDays": 35,
+              "quality": "medium",
+              "masterSource": "manual_qa_sheet",
+              "pros": [
+                "можно начать без новых интеграций"
+              ],
+              "cons": [
+                "маленькая выборка и сильный human bias"
+              ],
+              "backlog": [
+                "привести шкалы к общему формату"
+              ],
+              "aiBlock": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "repeat-call-rate",
+      "routeLabel": "Маршрут B",
+      "title": "Доля повторных обращений",
+      "pilotRationale": "Связана с cost-to-serve, но сигнал запаздывающий и требует длиннее наблюдать когорту.",
+      "tree": {
+        "leading": [
+          "Идентификатор клиента",
+          "Связка звонков в одну проблему"
+        ],
+        "operational": "Доля повторных обращений",
+        "financial": "Снижение повторных касаний -> меньше cost-to-serve"
+      },
+      "signals": [
+        {
+          "id": "repeat-linkage",
+          "label": "Связка повторных обращений",
+          "description": "Нужно понять, какие звонки относятся к одной проблеме клиента.",
+          "question": "Как связываем повторные обращения?",
+          "routeHint": "Structured + NLP",
+          "choices": [
+            {
+              "id": "crm-case-linkage",
+              "title": "CRM кейсы и client ID",
+              "system": "CRM + contact center",
+              "dataCategory": "Structured internal / machine-generated",
+              "stack": ["SQL", "BI"],
+              "devDays": 7,
+              "evidenceDays": 42,
+              "quality": "medium",
+              "masterSource": "crm_case_linkage",
+              "pros": [
+                "данные уже доступны"
+              ],
+              "cons": [
+                "одна проблема не всегда равна одному кейсу"
+              ],
+              "backlog": [
+                "проверить правила linkage"
+              ],
+              "aiBlock": false
+            },
+            {
+              "id": "topic-linkage-ai",
+              "title": "Тематика звонков через NLP",
+              "system": "ASR + CRM",
+              "dataCategory": "Mixed: structured + unstructured internal",
+              "stack": ["ASR", "NLP", "BI"],
+              "devDays": 14,
+              "evidenceDays": 28,
+              "quality": "high",
+              "masterSource": "repeat_topic_cluster_fact",
+              "pros": [
+                "лучше отделяет реальный повтор по одной проблеме"
+              ],
+              "cons": [
+                "сложнее внедрить в пилоте"
+              ],
+              "backlog": [
+                "собрать topic model",
+                "связать topic и client timeline"
+              ],
+              "aiBlock": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "aht",
+      "routeLabel": "Маршрут C",
+      "title": "Среднее время обработки звонка",
+      "pilotRationale": "Очень дешевая метрика, но она слабо показывает качество обучения и легко искажается нагрузкой.",
+      "tree": {
+        "leading": [
+          "Длительность звонка",
+          "Нагрузка по очередям"
+        ],
+        "operational": "Average handling time",
+        "financial": "Сокращение затрат на линию"
+      },
+      "signals": [
+        {
+          "id": "call-duration",
+          "label": "Длительность звонка",
+          "description": "Самая доступная операционная метрика, но не всегда лучшая для пилота.",
+          "question": "Как считаем длительность?",
+          "routeHint": "Structured internal",
+          "choices": [
+            {
+              "id": "telephony-log",
+              "title": "Телефонные логи",
+              "system": "Telephony",
+              "dataCategory": "Structured internal / machine-generated",
+              "stack": ["SQL", "BI"],
+              "devDays": 2,
+              "evidenceDays": 60,
+              "quality": "high",
+              "masterSource": "telephony_call_log",
+              "pros": [
+                "внедряется почти без разработки"
+              ],
+              "cons": [
+                "не отделяет длинный полезный разговор от плохого разговора"
+              ],
+              "backlog": [
+                "проверить исключения по transfer и hold"
+              ],
+              "aiBlock": false
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
+

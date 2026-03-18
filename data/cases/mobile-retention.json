@@ -1,0 +1,180 @@
+{
+  "id": "mobile-retention",
+  "title": "Мобильное приложение лучше удерживает клиентов",
+  "domain": "Retail / Mobile analytics",
+  "audience": "Digital product managers",
+  "businessQuestion": "Как выбрать пилотную метрику для гипотезы по удержанию и вовлечению, чтобы быстрее оценить эффект на продажи через мобильное приложение?",
+  "financialTarget": "Удержание и вовлечение -> больше цифровых продаж -> выше margin на клиента",
+  "twist": "Самая популярная продуктовая метрика не обязательно самая быстрая для доказательства гипотезы в пилоте.",
+  "expertNote": "Часто выигрывает метрика достижения ключевого value event, а не DAU или retention в чистом виде. Она быстрее реагирует и лучше связана с последующей продажей.",
+  "successCriteria": [
+    "метрика реагирует в течение пилота",
+    "есть связь с продажей или revenue proxy",
+    "данные не зависят от ручной выгрузки",
+    "можно разделить новые и старые когорты"
+  ],
+  "metricOptions": [
+    {
+      "id": "value-event-share",
+      "routeLabel": "Маршрут A",
+      "title": "Доля пользователей, дошедших до value event",
+      "pilotRationale": "Быстро показывает, дошел ли пользователь до полезного сценария, который затем связан с продажей.",
+      "tree": {
+        "leading": [
+          "События onboarding и usage",
+          "Факт достижения value event"
+        ],
+        "operational": "Доля пользователей с value event",
+        "financial": "Рост digital conversion -> больше продаж"
+      },
+      "signals": [
+        {
+          "id": "value-events",
+          "label": "Value event",
+          "description": "Нужно определить и посчитать полезное действие клиента внутри приложения.",
+          "question": "Как определяем value event?",
+          "routeHint": "Product analytics",
+          "choices": [
+            {
+              "id": "event-sdk",
+              "title": "События из product analytics SDK",
+              "system": "Mobile analytics",
+              "dataCategory": "Structured internal / machine-generated",
+              "stack": ["SQL", "BI"],
+              "devDays": 5,
+              "evidenceDays": 14,
+              "quality": "high",
+              "masterSource": "mobile_event_fact",
+              "pros": [
+                "самый быстрый продуктовый сигнал"
+              ],
+              "cons": [
+                "нужно проверить корректность event taxonomy"
+              ],
+              "backlog": [
+                "сверить naming событий",
+                "отфильтровать технические события"
+              ],
+              "aiBlock": false
+            },
+            {
+              "id": "clickstream-manual-map",
+              "title": "Сырой clickstream с ручной mapping-схемой",
+              "system": "Raw logs",
+              "dataCategory": "Structured internal / machine-generated",
+              "stack": ["SQL", "BI", "Python"],
+              "devDays": 9,
+              "evidenceDays": 14,
+              "quality": "medium",
+              "masterSource": "raw_clickstream_mart",
+              "pros": [
+                "можно гибче собирать кастомные сценарии"
+              ],
+              "cons": [
+                "сложнее поддерживать mapping"
+              ],
+              "backlog": [
+                "собрать sessionization",
+                "описать event mapping"
+              ],
+              "aiBlock": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "day-30-retention",
+      "routeLabel": "Маршрут B",
+      "title": "Retention на 30-й день",
+      "pilotRationale": "Очень уважаемая метрика, но как пилотный сигнал слишком медленная для короткого проекта.",
+      "tree": {
+        "leading": [
+          "Когорта установки",
+          "Возврат пользователя на 30-й день"
+        ],
+        "operational": "D30 retention",
+        "financial": "Больше удержанных клиентов -> выше LTV"
+      },
+      "signals": [
+        {
+          "id": "retention-signal",
+          "label": "Когортный retention",
+          "description": "Нужно дождаться полного окна наблюдения по когорте.",
+          "question": "Из какого источника считаем retention?",
+          "routeHint": "Cohort analytics",
+          "choices": [
+            {
+              "id": "cohort-mart",
+              "title": "Готовая когортная витрина",
+              "system": "DWH",
+              "dataCategory": "Structured internal / machine-generated",
+              "stack": ["SQL", "BI"],
+              "devDays": 3,
+              "evidenceDays": 30,
+              "quality": "high",
+              "masterSource": "mobile_retention_mart",
+              "pros": [
+                "метрика уже согласована в компании"
+              ],
+              "cons": [
+                "пилот все равно упирается в длинное окно наблюдения"
+              ],
+              "backlog": [
+                "обновить cohort refresh"
+              ],
+              "aiBlock": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "dau",
+      "routeLabel": "Маршрут C",
+      "title": "DAU / WAU",
+      "pilotRationale": "Очень быстро считается, но для защиты инвестиционного кейса часто слишком поверхностна.",
+      "tree": {
+        "leading": [
+          "Активные устройства",
+          "Сессии по дням"
+        ],
+        "operational": "DAU / WAU",
+        "financial": "Прокси вовлеченности для будущих продаж"
+      },
+      "signals": [
+        {
+          "id": "active-users",
+          "label": "Активные пользователи",
+          "description": "Простая и быстрая метрика, но слабее связана с ценным действием.",
+          "question": "Как считаем активность?",
+          "routeHint": "Product analytics",
+          "choices": [
+            {
+              "id": "sdk-dau",
+              "title": "Активность из mobile SDK",
+              "system": "Mobile analytics",
+              "dataCategory": "Structured internal / machine-generated",
+              "stack": ["SQL", "BI"],
+              "devDays": 1,
+              "evidenceDays": 21,
+              "quality": "high",
+              "masterSource": "dau_fact",
+              "pros": [
+                "самый дешевый маршрут"
+              ],
+              "cons": [
+                "активность не равна ценности для бизнеса"
+              ],
+              "backlog": [
+                "проверить фильтр ботов и тестовых устройств"
+              ],
+              "aiBlock": false
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
+
