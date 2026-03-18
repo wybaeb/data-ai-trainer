@@ -58,8 +58,8 @@ body::before {
 
 .hero {
   display: grid;
-  grid-template-columns: 1.6fr minmax(280px, 360px);
-  gap: 20px;
+  grid-template-columns: 1fr;
+  gap: 14px;
   align-items: stretch;
   margin-bottom: 24px;
 }
@@ -83,8 +83,8 @@ body::before {
   padding: 24px;
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  gap: 12px;
+  align-items: flex-start;
+  gap: 10px;
 }
 
 .eyebrow {
@@ -98,7 +98,7 @@ body::before {
 
 h1 {
   margin: 0 0 16px;
-  max-width: 12ch;
+  max-width: min(22ch, 100%);
   font-size: clamp(34px, 4.8vw, 58px);
   line-height: 0.96;
   letter-spacing: -0.04em;
@@ -153,7 +153,7 @@ h1 {
 }
 
 .panel-title {
-  margin: 0 0 14px;
+  margin: 0 0 10px;
   font-size: 26px;
   line-height: 1.12;
 }
@@ -203,6 +203,10 @@ h1 {
   gap: 10px;
 }
 
+.kicker-row {
+  margin: 0 0 14px;
+}
+
 .criteria-list,
 .mini-list,
 .backlog-list,
@@ -220,16 +224,26 @@ h1 {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  padding: 9px 12px;
+  max-width: 100%;
+  min-width: 0;
+  padding: 6px 10px;
   border-radius: 999px;
-  font-size: 13px;
+  font-size: 11px;
   font-weight: 700;
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .chip,
 .signal-pill {
   background: var(--green-soft);
   color: var(--green-dark);
+}
+
+.signal-pill {
+  max-width: min(100%, 220px);
 }
 
 .kicker {
@@ -317,13 +331,14 @@ h1 {
 .tree-columns {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 14px;
+  gap: 24px;
+  padding: 4px 0;
   position: relative;
 }
 
 .tree-stage {
   position: relative;
-  padding: 18px 20px 18px 24px;
+  padding: 20px 22px;
   border-radius: 24px;
   border: 1px solid var(--line);
   background: rgba(255, 255, 255, 0.9);
@@ -342,17 +357,21 @@ h1 {
 }
 
 .tree-stage::before {
-  content: "";
-  position: absolute;
-  left: 16px;
-  top: -14px;
-  width: 2px;
-  height: 14px;
-  background: var(--green);
+  display: none;
 }
 
-.tree-stage:first-child::before {
-  display: none;
+.tree-stage:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 100%;
+  width: 14px;
+  height: 24px;
+  transform: translateX(-50%);
+  background:
+    linear-gradient(var(--green), var(--green)) center 0 / 2px 14px no-repeat,
+    linear-gradient(45deg, transparent 50%, var(--green) 50%) left bottom / 50% 10px no-repeat,
+    linear-gradient(-45deg, transparent 50%, var(--green) 50%) right bottom / 50% 10px no-repeat;
 }
 
 .tree-stage-label {
@@ -386,8 +405,9 @@ h1 {
 
 .signal-card-head {
   display: flex;
-  justify-content: space-between;
-  gap: 12px;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
   margin-bottom: 16px;
 }
 
@@ -422,6 +442,39 @@ h1 {
   color: var(--muted);
 }
 
+.choice-timeline {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.timeline-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.timeline-pill-dev {
+  background: rgba(19, 138, 62, 0.08);
+  color: var(--green-dark);
+}
+
+.timeline-pill-observation {
+  background: rgba(33, 160, 56, 0.16);
+  color: var(--green-dark);
+}
+
+.choice-note {
+  margin: 0 0 12px;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.45;
+}
+
 .choice-meta {
   display: flex;
   flex-wrap: wrap;
@@ -447,7 +500,7 @@ h1 {
 .choice-columns h4,
 .comparison-card h4,
 .result-card h4 {
-  margin: 0 0 10px;
+  margin: 18px 0 10px;
   font-size: 15px;
 }
 
@@ -472,7 +525,8 @@ h1 {
 }
 
 .comparison-card.is-selected {
-  box-shadow: 0 18px 40px rgba(17, 91, 34, 0.12);
+  border-color: rgba(33, 160, 56, 0.58);
+  box-shadow: 0 18px 40px rgba(33, 160, 56, 0.2);
 }
 
 .comparison-head,
@@ -482,6 +536,18 @@ h1 {
   justify-content: space-between;
   gap: 10px;
   margin-bottom: 12px;
+}
+
+.comparison-head {
+  flex-direction: column;
+  align-items: flex-start;
+  margin-bottom: 18px;
+}
+
+.comparison-head h3 {
+  margin: 8px 0 0;
+  font-size: 22px;
+  line-height: 1.2;
 }
 
 .status-badge {
@@ -503,6 +569,7 @@ h1 {
   background: #fff;
   border: 1px solid var(--line);
   color: var(--text);
+  margin-left: auto;
 }
 
 .result-card.is-primary {

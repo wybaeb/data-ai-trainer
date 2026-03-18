@@ -11,7 +11,7 @@
   },
   {
     "id": "corporate-onboarding",
-    "title": "B2B-онбординг юрлиц проходит быстрее",
+    "title": "Подключение юрлиц B2B проходит быстрее",
     "file": "corporate-onboarding.json"
   },
   {
@@ -21,7 +21,7 @@
   },
   {
     "id": "collections-priority",
-    "title": "Soft collections быстрее возвращает деньги",
+    "title": "Мягкое взыскание быстрее возвращает деньги",
     "file": "collections-priority.json"
   }
 ]

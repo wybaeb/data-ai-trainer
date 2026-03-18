@@ -1,10 +1,10 @@
 {
   "id": "contact-center-coaching",
   "title": "Контакт-центр быстрее обучает операторов",
-  "domain": "Operations / Speech Analytics",
+  "domain": "Операции / Речевая аналитика",
   "audience": "Руководители функций и BI-команды",
   "businessQuestion": "Как быстрее выявлять операторов, которым нужен коучинг, чтобы повысить качество диалога и конверсию без роста штата супервайзеров?",
-  "financialTarget": "Лучшее качество обслуживания -> меньше повторных обращений -> ниже cost-to-serve",
+  "financialTarget": "Лучшее качество обслуживания -> меньше повторных обращений -> ниже стоимость обслуживания",
   "twist": "Самая привычная операционная метрика оказывается слишком медленной и плохо отделяет эффект обучения от сезонности нагрузки.",
   "expertNote": "Наиболее полезным становится маршрут с AI-оценкой соблюдения скрипта. Он сложнее по стеку, но быстрее показывает управляемый эффект на качество диалога и повторные обращения.",
   "successCriteria": [
@@ -25,7 +25,7 @@
           "Соблюдение ключевых шагов скрипта"
         ],
         "operational": "Доля звонков с соблюдением скрипта",
-        "financial": "Меньше повторных обращений -> ниже cost-to-serve"
+        "financial": "Меньше повторных обращений -> ниже стоимость обслуживания"
       },
       "signals": [
         {
@@ -33,17 +33,17 @@
           "label": "Текст звонка",
           "description": "Нужно получить текст разговора для автоматического анализа.",
           "question": "Как получаем текст звонка?",
-          "routeHint": "Unstructured audio",
+          "routeHint": "Аудио",
           "choices": [
             {
               "id": "asr-platform",
               "title": "Корпоративная ASR-платформа",
-              "system": "Speech analytics",
-              "dataCategory": "Unstructured internal / machine-generated",
+              "system": "Речевая аналитика",
+              "dataCategory": "Неструктурированные внутренние / машинные",
               "stack": ["ASR", "NLP", "LLM"],
               "devDays": 12,
               "evidenceDays": 14,
-              "quality": "high",
+              "quality": "высокое",
               "masterSource": "call_transcript_fact",
               "pros": [
                 "быстро дает богатые признаки для коучинга"
@@ -53,25 +53,25 @@
               ],
               "backlog": [
                 "подключить ASR поток",
-                "настроить словари и quality monitoring"
+                "настроить словари и контроль качества"
               ],
               "aiBlock": true
             },
             {
               "id": "manual-qa-sheets",
               "title": "Ручные QA-листы супервайзеров",
-              "system": "Excel / QA team",
-              "dataCategory": "Structured internal / human-generated",
+              "system": "Excel / команда контроля качества",
+              "dataCategory": "Структурированные внутренние / созданные вручную",
               "stack": ["Excel", "BI"],
               "devDays": 2,
               "evidenceDays": 35,
-              "quality": "medium",
+              "quality": "среднее",
               "masterSource": "manual_qa_sheet",
               "pros": [
                 "можно начать без новых интеграций"
               ],
               "cons": [
-                "маленькая выборка и сильный human bias"
+                "маленькая выборка и сильная человеческая предвзятость"
               ],
               "backlog": [
                 "привести шкалы к общему формату"
@@ -86,14 +86,14 @@
       "id": "repeat-call-rate",
       "routeLabel": "Маршрут B",
       "title": "Доля повторных обращений",
-      "pilotRationale": "Связана с cost-to-serve, но сигнал запаздывающий и требует длиннее наблюдать когорту.",
+      "pilotRationale": "Связана со стоимостью обслуживания, но сигнал запаздывающий и требует дольше наблюдать когорту.",
       "tree": {
         "leading": [
           "Идентификатор клиента",
           "Связка звонков в одну проблему"
         ],
         "operational": "Доля повторных обращений",
-        "financial": "Снижение повторных касаний -> меньше cost-to-serve"
+        "financial": "Снижение повторных касаний -> меньше стоимость обслуживания"
       },
       "signals": [
         {
@@ -101,17 +101,17 @@
           "label": "Связка повторных обращений",
           "description": "Нужно понять, какие звонки относятся к одной проблеме клиента.",
           "question": "Как связываем повторные обращения?",
-          "routeHint": "Structured + NLP",
+          "routeHint": "Структурированные данные + NLP",
           "choices": [
             {
               "id": "crm-case-linkage",
-              "title": "CRM кейсы и client ID",
+              "title": "CRM-кейсы и ID клиента",
               "system": "CRM + contact center",
-              "dataCategory": "Structured internal / machine-generated",
+              "dataCategory": "Структурированные внутренние / машинные",
               "stack": ["SQL", "BI"],
               "devDays": 7,
               "evidenceDays": 42,
-              "quality": "medium",
+              "quality": "среднее",
               "masterSource": "crm_case_linkage",
               "pros": [
                 "данные уже доступны"
@@ -120,7 +120,7 @@
                 "одна проблема не всегда равна одному кейсу"
               ],
               "backlog": [
-                "проверить правила linkage"
+                "проверить правила связи"
               ],
               "aiBlock": false
             },
@@ -128,11 +128,11 @@
               "id": "topic-linkage-ai",
               "title": "Тематика звонков через NLP",
               "system": "ASR + CRM",
-              "dataCategory": "Mixed: structured + unstructured internal",
+              "dataCategory": "Смешанные: структурированные и неструктурированные внутренние",
               "stack": ["ASR", "NLP", "BI"],
               "devDays": 14,
               "evidenceDays": 28,
-              "quality": "high",
+              "quality": "высокое",
               "masterSource": "repeat_topic_cluster_fact",
               "pros": [
                 "лучше отделяет реальный повтор по одной проблеме"
@@ -141,8 +141,8 @@
                 "сложнее внедрить в пилоте"
               ],
               "backlog": [
-                "собрать topic model",
-                "связать topic и client timeline"
+                "собрать тематическую модель",
+                "связать тему и таймлайн клиента"
               ],
               "aiBlock": true
             }
@@ -160,7 +160,7 @@
           "Длительность звонка",
           "Нагрузка по очередям"
         ],
-        "operational": "Average handling time",
+        "operational": "Среднее время обработки звонка",
         "financial": "Сокращение затрат на линию"
       },
       "signals": [
@@ -169,17 +169,17 @@
           "label": "Длительность звонка",
           "description": "Самая доступная операционная метрика, но не всегда лучшая для пилота.",
           "question": "Как считаем длительность?",
-          "routeHint": "Structured internal",
+          "routeHint": "Структурированные данные",
           "choices": [
             {
               "id": "telephony-log",
               "title": "Телефонные логи",
-              "system": "Telephony",
-              "dataCategory": "Structured internal / machine-generated",
+              "system": "Телефония",
+              "dataCategory": "Структурированные внутренние / машинные",
               "stack": ["SQL", "BI"],
               "devDays": 2,
               "evidenceDays": 60,
-              "quality": "high",
+              "quality": "высокое",
               "masterSource": "telephony_call_log",
               "pros": [
                 "внедряется почти без разработки"
@@ -188,7 +188,7 @@
                 "не отделяет длинный полезный разговор от плохого разговора"
               ],
               "backlog": [
-                "проверить исключения по transfer и hold"
+                "проверить исключения по переводу и удержанию"
               ],
               "aiBlock": false
             }

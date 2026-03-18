@@ -37,7 +37,7 @@ function updateUrl(caseId) {
 async function fetchJson(path) {
   const response = await fetch(path);
   if (!response.ok) {
-    throw new Error(`Failed to load ${path}: ${response.status}`);
+    throw new Error(`Не удалось загрузить ${path}: ${response.status}`);
   }
   return response.json();
 }
@@ -126,15 +126,33 @@ function renderList(items, className = "") {
   return `<ul class="${className}">${items.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul>`;
 }
 
+function pluralize(count, one, few, many) {
+  const mod10 = count % 10;
+  const mod100 = count % 100;
+
+  if (mod10 === 1 && mod100 !== 11) {
+    return one;
+  }
+
+  if (mod10 >= 2 && mod10 <= 4 && (mod100 < 12 || mod100 > 14)) {
+    return few;
+  }
+
+  return many;
+}
+
 function buildChoicePreview(choice) {
   return `
     <h4 class="choice-title">${escapeHtml(choice.title)}</h4>
     <p class="choice-system">${escapeHtml(choice.system)}</p>
+    <div class="choice-timeline">
+      <span class="timeline-pill timeline-pill-dev">${choice.devDays} дн. разработка</span>
+      <span class="timeline-pill timeline-pill-observation">${choice.evidenceDays} дн. наблюдение</span>
+    </div>
+    <p class="choice-note">Период наблюдения: время, за которое накапливается репрезентативная статистика.</p>
     <div class="choice-meta">
       <span>${escapeHtml(choice.dataCategory)}</span>
-      <span>${choice.devDays} дн dev</span>
-      <span>${choice.evidenceDays} дн evidence</span>
-      <span>quality: ${escapeHtml(choice.quality)}</span>
+      <span>качество: ${escapeHtml(choice.quality)}</span>
       <span>${escapeHtml(choice.masterSource)}</span>
     </div>
     <div class="choice-columns">
@@ -143,7 +161,7 @@ function buildChoicePreview(choice) {
         ${renderList(choice.stack, "mini-list")}
       </div>
       <div>
-        <h4>Backlog</h4>
+        <h4>Список работ</h4>
         ${renderList(choice.backlog, "backlog-list")}
       </div>
     </div>
@@ -156,11 +174,11 @@ function renderCaseHeader() {
   return `
     <section class="case-summary-grid" id="case-summary">
       <article class="panel">
+        <h2 class="panel-title">${escapeHtml(currentCase.title)}</h2>
         <div class="kicker-row">
           <span class="kicker">${escapeHtml(currentCase.domain)}</span>
           <span class="kicker">${escapeHtml(currentCase.audience)}</span>
         </div>
-        <h2 class="panel-title">${escapeHtml(currentCase.title)}</h2>
         <p class="panel-subtitle">${escapeHtml(currentCase.businessQuestion)}</p>
         <h3>Критерии к пилотной метрике</h3>
         ${renderList(currentCase.successCriteria, "criteria-list")}
@@ -168,8 +186,6 @@ function renderCaseHeader() {
       <article class="panel">
         <h2 class="panel-title">Финансовая цель</h2>
         <p class="panel-subtitle">${escapeHtml(currentCase.financialTarget)}</p>
-        <h3>Подвох кейса</h3>
-        <p class="muted">${escapeHtml(currentCase.twist)}</p>
       </article>
     </section>
   `;
@@ -249,7 +265,7 @@ function renderSourcePickers(metric) {
   section.innerHTML = `
     <h2 class="panel-title">Шаг 3. Подберите источники данных</h2>
     <p class="panel-subtitle">
-      Для каждого измеримого сигнала выбираем источник. Тут же становится видно, где нужен AI-блок, где проседает качество и сколько займет дорога до результата.
+      Для каждого измеримого сигнала выбираем источник. Тут же становится видно, где нужен AI-блок, где проседает качество и сколько займет дорога до результата. Период наблюдения показывает, когда статистика станет репрезентативной.
     </p>
     <div class="signal-grid" id="signal-grid"></div>
   `;
@@ -268,7 +284,7 @@ function renderSourcePickers(metric) {
     signal.choices.forEach((choice) => {
       const option = document.createElement("option");
       option.value = choice.id;
-      option.textContent = `${choice.title} · ${choice.devDays} дн dev · ${choice.evidenceDays} дн evidence`;
+      option.textContent = `${choice.title} · ${choice.devDays} дн. разработка · ${choice.evidenceDays} дн. наблюдение`;
       select.appendChild(option);
     });
 
@@ -310,16 +326,14 @@ function renderComparison(metric, selectedResult, bestOverall, bestForMetric) {
       return `
         <article class="comparison-card ${isBest ? "is-best" : ""} ${isSelected ? "is-selected" : ""}">
           <div class="comparison-head">
-            <div>
-              <span class="metric-route">${escapeHtml(result.metric.routeLabel)}</span>
-              <h3>${escapeHtml(result.metric.title)}</h3>
-            </div>
+            <span class="metric-route">${escapeHtml(result.metric.routeLabel)}</span>
+            <h3>${escapeHtml(result.metric.title)}</h3>
             <span class="status-badge ${statusClass}">${escapeHtml(statusLabel)}</span>
           </div>
           <div class="chips">
-            <span class="total-badge">${result.totalDays} дн total</span>
-            <span class="chip">${result.devDays} дн dev</span>
-            <span class="chip">${result.evidenceDays} дн evidence</span>
+            <span class="chip">${result.devDays} дн. разработка</span>
+            <span class="chip">${result.evidenceDays} дн. наблюдение</span>
+            <span class="total-badge">итого ${result.totalDays} дн.</span>
           </div>
           <h4>Лучший набор источников</h4>
           ${renderList(result.selectedChoices.map((choice) => choice.title), "mini-list")}
@@ -391,7 +405,7 @@ function renderResult(metric, selectedResult, bestOverall, bestForMetric) {
   section.innerHTML = `
     <h2 class="panel-title">Шаг 5. Что уходит в проект</h2>
     <p class="panel-subtitle">
-      В финале из абстрактной карты получается вполне проектный артефакт: маршрут, master-sources, AI-блоки и backlog работ.
+      В финале из абстрактной карты получается вполне проектный артефакт: маршрут, главные источники, AI-блоки и список работ.
     </p>
     <div class="formula-grid">
       <article class="formula-card">
@@ -400,7 +414,7 @@ function renderResult(metric, selectedResult, bestOverall, bestForMetric) {
       </article>
       <article class="formula-card">
         <p class="formula-value">${selectedResult.evidenceDays}</p>
-        <p class="formula-label">дней до репрезентативного сигнала</p>
+        <p class="formula-label">дней периода наблюдения до репрезентативной статистики</p>
       </article>
       <article class="formula-card">
         <p class="formula-value">${selectedResult.totalDays}</p>
@@ -416,13 +430,13 @@ function renderResult(metric, selectedResult, bestOverall, bestForMetric) {
         <p class="muted">${escapeHtml(verdictText)}</p>
         <h4>Итоговая пилотная метрика</h4>
         ${renderList([metric.title], "mini-list")}
-        <h4>Master-sources</h4>
+        <h4>Главные источники</h4>
         ${renderList(selectedResult.masterSources, "mini-list")}
       </article>
       <article class="result-card">
         <div class="result-head">
           <h3>Требуемый стек</h3>
-          <span class="status-badge ${selectedResult.aiNeeded ? "" : "warn"}">${selectedResult.aiNeeded ? "AI block" : "без AI"}</span>
+          <span class="status-badge ${selectedResult.aiNeeded ? "" : "warn"}">${selectedResult.aiNeeded ? "есть AI-блок" : "без AI"}</span>
         </div>
         ${renderList(selectedResult.stack, "mini-list")}
         <h4>Категории данных</h4>
@@ -430,15 +444,15 @@ function renderResult(metric, selectedResult, bestOverall, bestForMetric) {
       </article>
       <article class="result-card">
         <div class="result-head">
-          <h3>Backlog работ</h3>
-          <span class="status-badge">${selectedResult.backlog.length} задач</span>
+          <h3>Список работ</h3>
+          <span class="status-badge">${selectedResult.backlog.length} ${pluralize(selectedResult.backlog.length, "задача", "задачи", "задач")}</span>
         </div>
         ${renderList(selectedResult.backlog, "backlog-list")}
       </article>
       <article class="result-card">
         <div class="result-head">
           <h3>Риски и пробелы</h3>
-          <span class="status-badge danger">${selectedResult.issues.length} риска</span>
+          <span class="status-badge danger">${selectedResult.issues.length} ${pluralize(selectedResult.issues.length, "риск", "риска", "рисков")}</span>
         </div>
         ${renderList(selectedResult.issues, "issue-list")}
         <h4>Что помогает маршруту</h4>
@@ -455,7 +469,7 @@ function renderEmptyMetricState() {
   section.id = "empty-state";
   section.innerHTML = `
     <div class="empty-state">
-      Выберите пилотную метрику выше. После этого появятся дерево расчета, dropdown-источники и итоговая оценка маршрута.
+      Выберите пилотную метрику выше. После этого появятся дерево расчета, выбор источников и итоговая оценка маршрута.
     </div>
   `;
   return section;

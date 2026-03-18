@@ -1,50 +1,50 @@
 {
   "id": "legal-contract-review",
   "title": "Юристы быстрее проверяют договоры",
-  "domain": "B2B / Legal AI",
-  "audience": "Руководители и product owners",
-  "businessQuestion": "Как сократить цикл legal review и увеличить количество сделок в месяц без пропорционального роста штата юристов?",
+  "domain": "B2B / Юридический AI",
+  "audience": "Руководители и владельцы продукта",
+  "businessQuestion": "Как сократить цикл юридической проверки и увеличить количество сделок в месяц без пропорционального роста штата юристов?",
   "financialTarget": "Дополнительные сделки -> доход -> OI / NPV на горизонте 36 месяцев",
   "twist": "Самый дешевый путь в разработке проигрывает, если слишком долго ждать статистически доверяемый результат.",
-  "expertNote": "В этом кейсе побеждает маршрут со средним временем review. Он требует больше подготовки данных, но быстрее всех приводит к сигналу, по которому можно принимать решение о пилоте.",
+  "expertNote": "В этом кейсе побеждает маршрут со средним временем проверки. Он требует больше подготовки данных, но быстрее всех приводит к сигналу, по которому можно принимать решение о пилоте.",
   "successCriteria": [
     "метрика встраивается в финансовую модель",
     "данные реально доступны внутри банка",
     "стоимость измерения пилота приемлема",
     "результат можно собрать на разумном объеме наблюдений",
-    "есть benchmark или базовая линия до запуска AI"
+    "есть ориентир или базовая линия до запуска AI"
   ],
   "metricOptions": [
     {
       "id": "avg-review-time",
       "routeLabel": "Маршрут A",
-      "title": "Среднее время review договора",
-      "pilotRationale": "Маршрут ближе всего к реальной экономии времени и throughput сделок.",
+      "title": "Среднее время проверки договора",
+      "pilotRationale": "Маршрут ближе всего к реальной экономии времени и пропускной способности сделок.",
       "tree": {
         "leading": [
-          "Время по этапам review",
+          "Время по этапам проверки",
           "Сложность договора"
         ],
-        "operational": "Среднее время review договора",
+        "operational": "Среднее время проверки договора",
         "financial": "Дополнительные сделки -> доход -> OI / NPV"
       },
       "signals": [
         {
           "id": "review-time",
-          "label": "Время по этапам review",
+          "label": "Время по этапам проверки",
           "description": "Нужно измерить фактическое время прохождения договора по юридическому процессу.",
-          "question": "Откуда берем длительность review?",
-          "routeHint": "Structured internal",
+          "question": "Откуда берем длительность проверки?",
+          "routeHint": "Структурированные данные",
           "choices": [
             {
               "id": "workflow-only",
-              "title": "Только workflow timestamps",
+              "title": "Только таймстампы workflow",
               "system": "DMS / workflow",
-              "dataCategory": "Structured internal / machine-generated",
+              "dataCategory": "Структурированные внутренние / машинные",
               "stack": ["SQL", "BI"],
               "devDays": 8,
               "evidenceDays": 35,
-              "quality": "medium",
+              "quality": "среднее",
               "masterSource": "workflow_event_log",
               "pros": [
                 "уже есть в корпоративной системе",
@@ -62,13 +62,13 @@
             },
             {
               "id": "activity-plus-workflow",
-              "title": "Activity tracking + workflow merge",
+              "title": "Трекинг активности + объединение с workflow",
               "system": "Endpoint telemetry + DMS",
-              "dataCategory": "Structured internal / machine-generated",
-              "stack": ["SQL", "BI", "classic ML"],
+              "dataCategory": "Структурированные внутренние / машинные",
+              "stack": ["SQL", "BI", "классический ML"],
               "devDays": 18,
               "evidenceDays": 28,
-              "quality": "high",
+              "quality": "высокое",
               "masterSource": "review_activity_mart",
               "pros": [
                 "точнее считает реальное рабочее время",
@@ -78,9 +78,9 @@
                 "нужно связать события пользователя и ID договора"
               ],
               "backlog": [
-                "собрать event collection",
-                "сделать mapping user-contract",
-                "очистить idle time"
+                "собрать поток событий",
+                "связать пользователя и договор",
+                "очистить время простоя"
               ],
               "aiBlock": false
             }
@@ -91,41 +91,41 @@
           "label": "Сложность договора",
           "description": "Нужна стратификация, чтобы не перепутать эффект AI с изменением микса простых и сложных договоров.",
           "question": "Как оцениваем сложность договора?",
-          "routeHint": "Classifier / AI",
+          "routeHint": "Классификатор / AI",
           "choices": [
             {
               "id": "llm-complexity",
               "title": "LLM-классификация текста договора",
               "system": "Архив DOC/PDF",
-              "dataCategory": "Unstructured internal / human-generated",
+              "dataCategory": "Неструктурированные внутренние / созданные вручную",
               "stack": ["OCR", "LLM"],
               "devDays": 10,
               "evidenceDays": 7,
-              "quality": "high",
+              "quality": "высокое",
               "masterSource": "contract_text_features",
               "pros": [
                 "ловит нестандартные договоры",
                 "дает полезный AI-блок для маршрутизации"
               ],
               "cons": [
-                "нужен quality sampling и prompt tuning"
+                "нужна проверочная выборка и настройка промпта"
               ],
               "backlog": [
-                "OCR для scan PDF",
-                "prompt/rules для сложности",
-                "quality sampling"
+                "OCR для сканов PDF",
+                "промпт и правила для сложности",
+                "проверочная выборка"
               ],
               "aiBlock": true
             },
             {
               "id": "contract-type-dictionary",
-              "title": "Справочник типа договора",
+              "title": "Справочник типов договоров",
               "system": "Карточка договора в DMS",
-              "dataCategory": "Structured internal / human-generated",
+              "dataCategory": "Структурированные внутренние / созданные вручную",
               "stack": ["SQL", "BI"],
               "devDays": 2,
               "evidenceDays": 14,
-              "quality": "medium",
+              "quality": "среднее",
               "masterSource": "contract_type_dim",
               "pros": [
                 "дешево и быстро стартует"
@@ -134,7 +134,7 @@
                 "тип договора не всегда отражает сложность"
               ],
               "backlog": [
-                "проверить fill-rate поля type"
+                "проверить заполненность поля типа"
               ],
               "aiBlock": false
             }
@@ -153,25 +153,25 @@
           "Число активных юристов"
         ],
         "operational": "Договоры на юриста в месяц",
-        "financial": "Throughput сделок -> доход -> OI / NPV"
+        "financial": "Пропускная способность сделок -> доход -> OI / NPV"
       },
       "signals": [
         {
           "id": "throughput-count",
           "label": "Количество завершенных договоров",
           "description": "Нужно стабильно считать, сколько договоров закрывается каждым юристом за период.",
-          "question": "Как считаем throughput?",
-          "routeHint": "Structured internal",
+          "question": "Как считаем пропускную способность?",
+          "routeHint": "Структурированные данные",
           "choices": [
             {
               "id": "dms-counters",
               "title": "Статусы закрытия из DMS",
               "system": "DMS",
-              "dataCategory": "Structured internal / machine-generated",
+              "dataCategory": "Структурированные внутренние / машинные",
               "stack": ["SQL", "BI"],
               "devDays": 4,
               "evidenceDays": 90,
-              "quality": "high",
+              "quality": "высокое",
               "masterSource": "dms_contract_closed_fact",
               "pros": [
                 "данные почти готовы",
@@ -189,18 +189,18 @@
               "id": "manual-export",
               "title": "Ручной экспорт из Excel команды",
               "system": "Excel / локальные реестры",
-              "dataCategory": "Structured internal / human-generated",
+              "dataCategory": "Структурированные внутренние / созданные вручную",
               "stack": ["Excel", "BI"],
               "devDays": 1,
               "evidenceDays": 60,
-              "quality": "low",
+              "quality": "низкое",
               "masterSource": "manual_contract_registry",
               "pros": [
                 "можно стартовать уже сегодня"
               ],
               "cons": [
                 "дубли и ручные ошибки",
-                "нет устойчивого master-source"
+                "нет устойчивого главного источника"
               ],
               "backlog": [
                 "дедупликация",
@@ -237,11 +237,11 @@
               "id": "workflow-sla",
               "title": "SLA из workflow-логов",
               "system": "Workflow",
-              "dataCategory": "Structured internal / machine-generated",
+              "dataCategory": "Структурированные внутренние / машинные",
               "stack": ["SQL", "BI"],
               "devDays": 6,
               "evidenceDays": 45,
-              "quality": "medium",
+              "quality": "среднее",
               "masterSource": "workflow_sla_fact",
               "pros": [
                 "можно быстро встроить в дашборд"
@@ -250,7 +250,7 @@
                 "фиксированное SLA не учитывает сложность кейса"
               ],
               "backlog": [
-                "разметить breach events",
+                "разметить события нарушения",
                 "сверить SLA с бизнес-правилами"
               ],
               "aiBlock": false
@@ -258,12 +258,12 @@
             {
               "id": "ai-sla-by-complexity",
               "title": "SLA с AI-классификацией сложности",
-              "system": "Workflow + contract text archive",
-              "dataCategory": "Mixed: structured + unstructured internal",
+              "system": "Workflow + архив текстов договоров",
+              "dataCategory": "Смешанные: структурированные и неструктурированные внутренние",
               "stack": ["SQL", "OCR", "LLM"],
               "devDays": 10,
               "evidenceDays": 45,
-              "quality": "high",
+              "quality": "высокое",
               "masterSource": "sla_complexity_mart",
               "pros": [
                 "корректнее сравнивает сложные и простые кейсы"
@@ -273,7 +273,7 @@
               ],
               "backlog": [
                 "сделать OCR/LLM классификатор",
-                "добавить quality sampling"
+                "добавить проверочную выборку"
               ],
               "aiBlock": true
             }

@@ -1,15 +1,15 @@
 {
   "id": "collections-priority",
-  "title": "Soft collections быстрее возвращает деньги",
-  "domain": "Collections / Next-best-action",
-  "audience": "Collections leads и data product owners",
-  "businessQuestion": "Как выбрать пилотную метрику для улучшения soft collections, чтобы быстрее доказать эффект приоритизации и AI-подсказок?",
-  "financialTarget": "Быстрее возврат просрочки -> меньше cost of risk и операционных потерь",
+  "title": "Мягкое взыскание быстрее возвращает деньги",
+  "domain": "Взыскание / Следующее лучшее действие",
+  "audience": "Руководители взыскания и владельцы data-продукта",
+  "businessQuestion": "Как выбрать пилотную метрику для улучшения мягкого взыскания, чтобы быстрее доказать эффект приоритизации и AI-подсказок?",
+  "financialTarget": "Быстрее возврат просрочки -> меньше стоимость риска и операционных потерь",
   "twist": "Самая интуитивная нагрузочная метрика здесь почти бесполезна, если она не показывает реальный возврат денег.",
-  "expertNote": "В большинстве таких кейсов выигрывает promise-to-pay kept rate: он не такой быстрый, как звонки на оператора, но намного ближе к деньгам и дает достаточно ранний сигнал.",
+  "expertNote": "В большинстве таких кейсов выигрывает доля выполненных обещаний оплаты: она не такая быстрая, как звонки на оператора, но намного ближе к деньгам и дает достаточно ранний сигнал.",
   "successCriteria": [
     "метрика связана с возвратом денег",
-    "есть понятная baseline группа",
+    "есть понятная базовая группа",
     "можно разделить обещания и фактические оплаты",
     "метрика не зависит только от объема контактов"
   ],
@@ -17,55 +17,55 @@
     {
       "id": "ptp-kept-rate",
       "routeLabel": "Маршрут A",
-      "title": "Доля выполненных promise-to-pay",
+      "title": "Доля выполненных обещаний оплаты",
       "pilotRationale": "Маршрут хорошо связывает качество приоритизации с реальным денежным результатом.",
       "tree": {
         "leading": [
           "Обещание оплаты",
           "Факт платежа в окне обещания"
         ],
-        "operational": "Promise-to-pay kept rate",
-        "financial": "Больше собранных денег -> ниже cost of risk"
+        "operational": "Доля выполненных обещаний оплаты",
+        "financial": "Больше собранных денег -> ниже стоимость риска"
       },
       "signals": [
         {
           "id": "ptp-linkage",
           "label": "Связка обещания и оплаты",
           "description": "Важно корректно связать обещание клиента и последующий платеж.",
-          "question": "Как строим linkage обещания и оплаты?",
-          "routeHint": "Collections core",
+          "question": "Как строим связку обещания и оплаты?",
+          "routeHint": "Взыскание / core",
           "choices": [
             {
               "id": "crm-payment-linkage",
-              "title": "CRM обещания + core payments",
+              "title": "Обещания из CRM + платежи из core",
               "system": "CRM + core",
-              "dataCategory": "Structured internal / machine-generated",
+              "dataCategory": "Структурированные внутренние / машинные",
               "stack": ["SQL", "BI"],
               "devDays": 9,
               "evidenceDays": 18,
-              "quality": "high",
+              "quality": "высокое",
               "masterSource": "ptp_payment_fact",
               "pros": [
                 "напрямую связано с возвратом денег"
               ],
               "cons": [
-                "нужны единые client/account keys"
+                "нужны единые ID клиента и счета"
               ],
               "backlog": [
-                "связать promise и payment окна",
-                "описать business rules"
+                "связать окна обещания и оплаты",
+                "описать бизнес-правила"
               ],
               "aiBlock": false
             },
             {
               "id": "manual-ptp-tracker",
               "title": "Ручной реестр обещаний команды",
-              "system": "Excel / collections team",
-              "dataCategory": "Structured internal / human-generated",
+              "system": "Excel / команда взыскания",
+              "dataCategory": "Структурированные внутренние / созданные вручную",
               "stack": ["Excel", "BI"],
               "devDays": 2,
               "evidenceDays": 28,
-              "quality": "low",
+              "quality": "низкое",
               "masterSource": "manual_ptp_tracker",
               "pros": [
                 "можно стартовать без интеграции"
@@ -74,7 +74,7 @@
                 "риск пропусков и ручных ошибок"
               ],
               "backlog": [
-                "сверка с core payments"
+                "сверка с платежами из core"
               ],
               "aiBlock": false
             }
@@ -93,7 +93,7 @@
           "Активные коллекторы"
         ],
         "operational": "Контакты на коллектора",
-        "financial": "Косвенная прокси продуктивности"
+        "financial": "Косвенный показатель продуктивности"
       },
       "signals": [
         {
@@ -101,17 +101,17 @@
           "label": "Количество контактов",
           "description": "Маршрут удобный, но слабо связан с конечным финансовым результатом.",
           "question": "Как считаем контакты?",
-          "routeHint": "Telephony / CRM",
+          "routeHint": "Телефония / CRM",
           "choices": [
             {
               "id": "telephony-contacts",
-              "title": "Телефония + CRM activity",
-              "system": "Telephony + CRM",
-              "dataCategory": "Structured internal / machine-generated",
+              "title": "Телефония + активность CRM",
+              "system": "Телефония + CRM",
+              "dataCategory": "Структурированные внутренние / машинные",
               "stack": ["SQL", "BI"],
               "devDays": 3,
               "evidenceDays": 21,
-              "quality": "high",
+              "quality": "высокое",
               "masterSource": "collections_contact_fact",
               "pros": [
                 "запускается очень быстро"
@@ -120,7 +120,7 @@
                 "можно нарастить контакты и не улучшить сбор"
               ],
               "backlog": [
-                "дедупликация activity"
+                "дедупликация активности"
               ],
               "aiBlock": false
             }
@@ -138,7 +138,7 @@
           "Дата возникновения просрочки",
           "Время первого контакта"
         ],
-        "operational": "Time to first contact",
+        "operational": "Время до первого контакта",
         "financial": "Быстрее реакция -> выше шанс оплаты"
       },
       "signals": [
@@ -151,22 +151,22 @@
           "choices": [
             {
               "id": "core-crm-timeline",
-              "title": "Core delinquency + CRM activity",
+              "title": "Просрочка из core + активность CRM",
               "system": "Core + CRM",
-              "dataCategory": "Structured internal / machine-generated",
-              "stack": ["SQL", "BI", "process mining"],
+              "dataCategory": "Структурированные внутренние / машинные",
+              "stack": ["SQL", "BI", "анализ процессов"],
               "devDays": 7,
               "evidenceDays": 21,
-              "quality": "medium",
+              "quality": "среднее",
               "masterSource": "delinquency_contact_timeline",
               "pros": [
-                "полезно для process bottlenecks"
+                "полезно для узких мест процесса"
               ],
               "cons": [
                 "не доказывает сам по себе денежный эффект"
               ],
               "backlog": [
-                "связать account timeline"
+                "связать таймлайн счета"
               ],
               "aiBlock": false
             }

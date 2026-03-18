@@ -1,15 +1,15 @@
 {
   "id": "mobile-retention",
   "title": "Мобильное приложение лучше удерживает клиентов",
-  "domain": "Retail / Mobile analytics",
-  "audience": "Digital product managers",
+  "domain": "Розница / Мобильная аналитика",
+  "audience": "Руководители цифрового продукта",
   "businessQuestion": "Как выбрать пилотную метрику для гипотезы по удержанию и вовлечению, чтобы быстрее оценить эффект на продажи через мобильное приложение?",
-  "financialTarget": "Удержание и вовлечение -> больше цифровых продаж -> выше margin на клиента",
+  "financialTarget": "Удержание и вовлечение -> больше цифровых продаж -> выше маржа на клиента",
   "twist": "Самая популярная продуктовая метрика не обязательно самая быстрая для доказательства гипотезы в пилоте.",
-  "expertNote": "Часто выигрывает метрика достижения ключевого value event, а не DAU или retention в чистом виде. Она быстрее реагирует и лучше связана с последующей продажей.",
+  "expertNote": "Часто выигрывает метрика достижения ключевого целевого действия, а не DAU или удержание в чистом виде. Она быстрее реагирует и лучше связана с последующей продажей.",
   "successCriteria": [
     "метрика реагирует в течение пилота",
-    "есть связь с продажей или revenue proxy",
+    "есть связь с продажей или прокси выручки",
     "данные не зависят от ручной выгрузки",
     "можно разделить новые и старые когорты"
   ],
@@ -17,65 +17,65 @@
     {
       "id": "value-event-share",
       "routeLabel": "Маршрут A",
-      "title": "Доля пользователей, дошедших до value event",
+      "title": "Доля пользователей, дошедших до целевого действия",
       "pilotRationale": "Быстро показывает, дошел ли пользователь до полезного сценария, который затем связан с продажей.",
       "tree": {
         "leading": [
-          "События onboarding и usage",
-          "Факт достижения value event"
+          "События подключения и использования",
+          "Факт достижения целевого действия"
         ],
-        "operational": "Доля пользователей с value event",
-        "financial": "Рост digital conversion -> больше продаж"
+        "operational": "Доля пользователей с целевым действием",
+        "financial": "Рост цифровой конверсии -> больше продаж"
       },
       "signals": [
         {
           "id": "value-events",
-          "label": "Value event",
+          "label": "Целевое действие",
           "description": "Нужно определить и посчитать полезное действие клиента внутри приложения.",
-          "question": "Как определяем value event?",
-          "routeHint": "Product analytics",
+          "question": "Как определяем целевое действие?",
+          "routeHint": "Продуктовая аналитика",
           "choices": [
             {
               "id": "event-sdk",
-              "title": "События из product analytics SDK",
-              "system": "Mobile analytics",
-              "dataCategory": "Structured internal / machine-generated",
+              "title": "События из SDK продуктовой аналитики",
+              "system": "Мобильная аналитика",
+              "dataCategory": "Структурированные внутренние / машинные",
               "stack": ["SQL", "BI"],
               "devDays": 5,
               "evidenceDays": 14,
-              "quality": "high",
+              "quality": "высокое",
               "masterSource": "mobile_event_fact",
               "pros": [
                 "самый быстрый продуктовый сигнал"
               ],
               "cons": [
-                "нужно проверить корректность event taxonomy"
+                "нужно проверить корректность событийной таксономии"
               ],
               "backlog": [
-                "сверить naming событий",
+                "сверить названия событий",
                 "отфильтровать технические события"
               ],
               "aiBlock": false
             },
             {
               "id": "clickstream-manual-map",
-              "title": "Сырой clickstream с ручной mapping-схемой",
-              "system": "Raw logs",
-              "dataCategory": "Structured internal / machine-generated",
+              "title": "Сырые журналы кликов с ручной схемой соответствия",
+              "system": "Сырые логи",
+              "dataCategory": "Структурированные внутренние / машинные",
               "stack": ["SQL", "BI", "Python"],
               "devDays": 9,
               "evidenceDays": 14,
-              "quality": "medium",
+              "quality": "среднее",
               "masterSource": "raw_clickstream_mart",
               "pros": [
                 "можно гибче собирать кастомные сценарии"
               ],
               "cons": [
-                "сложнее поддерживать mapping"
+                "сложнее поддерживать схему соответствия"
               ],
               "backlog": [
-                "собрать sessionization",
-                "описать event mapping"
+                "собрать сессии",
+                "описать схему событий"
               ],
               "aiBlock": false
             }
@@ -86,33 +86,33 @@
     {
       "id": "day-30-retention",
       "routeLabel": "Маршрут B",
-      "title": "Retention на 30-й день",
+      "title": "Удержание на 30-й день",
       "pilotRationale": "Очень уважаемая метрика, но как пилотный сигнал слишком медленная для короткого проекта.",
       "tree": {
         "leading": [
           "Когорта установки",
           "Возврат пользователя на 30-й день"
         ],
-        "operational": "D30 retention",
+        "operational": "Удержание D30",
         "financial": "Больше удержанных клиентов -> выше LTV"
       },
       "signals": [
         {
           "id": "retention-signal",
-          "label": "Когортный retention",
+          "label": "Когортное удержание",
           "description": "Нужно дождаться полного окна наблюдения по когорте.",
-          "question": "Из какого источника считаем retention?",
-          "routeHint": "Cohort analytics",
+          "question": "Из какого источника считаем удержание?",
+          "routeHint": "Когортная аналитика",
           "choices": [
             {
               "id": "cohort-mart",
               "title": "Готовая когортная витрина",
               "system": "DWH",
-              "dataCategory": "Structured internal / machine-generated",
+              "dataCategory": "Структурированные внутренние / машинные",
               "stack": ["SQL", "BI"],
               "devDays": 3,
               "evidenceDays": 30,
-              "quality": "high",
+              "quality": "высокое",
               "masterSource": "mobile_retention_mart",
               "pros": [
                 "метрика уже согласована в компании"
@@ -121,7 +121,7 @@
                 "пилот все равно упирается в длинное окно наблюдения"
               ],
               "backlog": [
-                "обновить cohort refresh"
+                "обновить пересчет когорт"
               ],
               "aiBlock": false
             }
@@ -148,17 +148,17 @@
           "label": "Активные пользователи",
           "description": "Простая и быстрая метрика, но слабее связана с ценным действием.",
           "question": "Как считаем активность?",
-          "routeHint": "Product analytics",
+          "routeHint": "Продуктовая аналитика",
           "choices": [
             {
               "id": "sdk-dau",
-              "title": "Активность из mobile SDK",
-              "system": "Mobile analytics",
-              "dataCategory": "Structured internal / machine-generated",
+              "title": "Активность из мобильного SDK",
+              "system": "Мобильная аналитика",
+              "dataCategory": "Структурированные внутренние / машинные",
               "stack": ["SQL", "BI"],
               "devDays": 1,
               "evidenceDays": 21,
-              "quality": "high",
+              "quality": "высокое",
               "masterSource": "dau_fact",
               "pros": [
                 "самый дешевый маршрут"

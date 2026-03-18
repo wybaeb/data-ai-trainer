@@ -1,16 +1,16 @@
 {
   "id": "corporate-onboarding",
-  "title": "B2B-онбординг юрлиц проходит быстрее",
-  "domain": "B2B onboarding / Process mining",
-  "audience": "Операционные руководители и process owners",
-  "businessQuestion": "Как сократить время онбординга корпоративного клиента и быстрее переводить поданные заявки в активные отношения?",
+  "title": "Подключение юрлиц B2B проходит быстрее",
+  "domain": "Подключение юрлиц B2B / Анализ процессов",
+  "audience": "Операционные руководители и владельцы процессов",
+  "businessQuestion": "Как сократить время подключения корпоративного клиента и быстрее переводить поданные заявки в активные отношения?",
   "financialTarget": "Быстрее активация клиента -> раньше начинается оборот и комиссионный доход",
-  "twist": "Самая точная метрика не всегда выигрывает, если для нее нет готового master-source и нужно долго собирать корректный след процесса.",
-  "expertNote": "Здесь часто выигрывает метрика времени от подачи до активации, но только если процессовый след можно быстро собрать из workflow и CRM. Иначе лучше брать долю досье, ушедших на доработку.",
+  "twist": "Самая точная метрика не всегда выигрывает, если для нее нет готового главного источника и нужно долго собирать корректный след процесса.",
+  "expertNote": "Здесь часто выигрывает метрика времени от подачи до активации, но только если след процесса можно быстро собрать из workflow и CRM. Иначе лучше брать долю досье, ушедших на доработку.",
   "successCriteria": [
-    "метрика связана с revenue activation",
+    "метрика связана с выручкой от активации",
     "процесс измерим по этапам",
-    "есть возможность сравнить baseline и pilot",
+    "есть возможность сравнить базовую линию и пилот",
     "можно объяснить бизнесу, где именно теряется время"
   ],
   "metricOptions": [
@@ -21,10 +21,10 @@
       "pilotRationale": "Лучше всего связывает улучшение процесса с доходом, но нужен хороший процессовый след.",
       "tree": {
         "leading": [
-          "Таймстампы этапов onboarding",
+          "Таймстампы этапов подключения",
           "Дата активации клиента"
         ],
-        "operational": "Среднее время onboarding",
+        "operational": "Среднее время подключения",
         "financial": "Раньше активирован клиент -> раньше начинается оборот"
       },
       "signals": [
@@ -33,45 +33,45 @@
           "label": "Таймстампы этапов",
           "description": "Нужно собрать непрерывный след клиентского пути по этапам.",
           "question": "Как строим след процесса?",
-          "routeHint": "Structured internal",
+          "routeHint": "Структурированные данные",
           "choices": [
             {
               "id": "workflow-crm-join",
-              "title": "Join workflow и CRM",
+              "title": "Объединение workflow и CRM",
               "system": "Workflow + CRM",
-              "dataCategory": "Structured internal / machine-generated",
-              "stack": ["SQL", "BI", "process mining"],
+              "dataCategory": "Структурированные внутренние / машинные",
+              "stack": ["SQL", "BI", "анализ процессов"],
               "devDays": 11,
               "evidenceDays": 21,
-              "quality": "high",
+              "quality": "высокое",
               "masterSource": "onboarding_process_fact",
               "pros": [
                 "показывает узкие места по этапам"
               ],
               "cons": [
-                "нужен стабильный client/application ID"
+                "нужен стабильный ID клиента и заявки"
               ],
               "backlog": [
-                "сделать join ключи",
-                "построить onboarding mart"
+                "сделать ключи связи",
+                "построить витрину подключения"
               ],
               "aiBlock": false
             },
             {
               "id": "manual-sampling",
-              "title": "Ручной sampling по кейсам",
+              "title": "Ручная выборка по кейсам",
               "system": "Excel / команды фронта",
-              "dataCategory": "Structured internal / human-generated",
+              "dataCategory": "Структурированные внутренние / созданные вручную",
               "stack": ["Excel", "BI"],
               "devDays": 3,
               "evidenceDays": 40,
-              "quality": "low",
+              "quality": "низкое",
               "masterSource": "manual_onboarding_sample",
               "pros": [
-                "подходит для быстрого discovery"
+                "подходит для быстрого первичного изучения"
               ],
               "cons": [
-                "нет полноценного process trace"
+                "нет полноценного следа процесса"
               ],
               "backlog": [
                 "дедупликация кейсов",
@@ -102,17 +102,17 @@
           "label": "Причины возврата",
           "description": "Важно понять, почему досье возвращаются и можно ли это исправить AI-подсказками.",
           "question": "Как маркируем причины возврата?",
-          "routeHint": "Structured + text",
+          "routeHint": "Структурированные данные + текст",
           "choices": [
             {
               "id": "reason-codes",
               "title": "Коды причин в workflow",
               "system": "Workflow",
-              "dataCategory": "Structured internal / human-generated",
+              "dataCategory": "Структурированные внутренние / созданные вручную",
               "stack": ["SQL", "BI"],
               "devDays": 4,
               "evidenceDays": 18,
-              "quality": "medium",
+              "quality": "среднее",
               "masterSource": "onboarding_rework_reason_fact",
               "pros": [
                 "быстро дает пилотный сигнал"
@@ -121,19 +121,19 @@
                 "часть причин кодируется слишком грубо"
               ],
               "backlog": [
-                "очистить reason codes"
+                "очистить коды причин"
               ],
               "aiBlock": false
             },
             {
               "id": "llm-memo-classification",
-              "title": "LLM-классификация комментариев к возврату",
+              "title": "LLM-классификация комментариев о возврате",
               "system": "Комментарии операционистов",
-              "dataCategory": "Unstructured internal / human-generated",
+              "dataCategory": "Неструктурированные внутренние / созданные вручную",
               "stack": ["LLM", "NLP", "BI"],
               "devDays": 9,
               "evidenceDays": 14,
-              "quality": "high",
+              "quality": "высокое",
               "masterSource": "rework_comment_topics",
               "pros": [
                 "лучше выделяет реальные корневые причины"
@@ -143,7 +143,7 @@
               ],
               "backlog": [
                 "собрать корпус комментариев",
-                "сделать quality sampling"
+                "сделать проверочную выборку"
               ],
               "aiBlock": true
             }
@@ -169,18 +169,18 @@
           "id": "weekly-throughput",
           "label": "Количество досье",
           "description": "Простая нагрузочная метрика, но не всегда хорошая для защиты проекта.",
-          "question": "Как считаем throughput команды?",
-          "routeHint": "Structured internal",
+          "question": "Как считаем пропускную способность команды?",
+          "routeHint": "Структурированные данные",
           "choices": [
             {
               "id": "crm-throughput",
               "title": "Счетчик поданных досье из CRM",
               "system": "CRM",
-              "dataCategory": "Structured internal / machine-generated",
+              "dataCategory": "Структурированные внутренние / машинные",
               "stack": ["SQL", "BI"],
               "devDays": 2,
               "evidenceDays": 49,
-              "quality": "high",
+              "quality": "высокое",
               "masterSource": "crm_weekly_dossier_fact",
               "pros": [
                 "самый быстрый запуск"
@@ -189,7 +189,7 @@
                 "почти не объясняет качество и возвраты"
               ],
               "backlog": [
-                "сделать weekly snapshot"
+                "сделать недельный снимок"
               ],
               "aiBlock": false
             }
