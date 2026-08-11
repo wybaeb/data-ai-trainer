@@ -1,5 +1,20 @@
 [
   {
+    "id": "card-activation",
+    "title": "Кредитная карта активируется чаще · A360 Шаг 1",
+    "file": "card-activation.json"
+  },
+  {
+    "id": "loan-pipeline-time",
+    "title": "Кредитный конвейер: доказать, где теряется время · A360 Шаг 1",
+    "file": "loan-pipeline-time.json"
+  },
+  {
+    "id": "committee-master-source",
+    "title": "Одна правда для комитета: master-source · A360 Шаг 1",
+    "file": "committee-master-source.json"
+  },
+  {
     "id": "legal-contract-review",
     "title": "Юристы быстрее проверяют договоры",
     "file": "legal-contract-review.json"
@@ -25,4 +40,3 @@
     "file": "collections-priority.json"
   }
 ]
-
